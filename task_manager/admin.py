@@ -12,14 +12,14 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
-    list_display = ('title', 'category', 'status', 'deadline')
+    list_display = ('title', 'status', 'deadline')
     search_fields = ('title',)
     list_filter = ('status', 'deadline')
 
 
 @admin.register(SubTask)
 class SubTaskAdmin(admin.ModelAdmin):
-    list_display = ('title', 'category', 'status', 'deadline')
+    list_display = ('title', 'status', 'deadline')
     search_fields = ('title',)
     list_filter = ('status', 'deadline')
 

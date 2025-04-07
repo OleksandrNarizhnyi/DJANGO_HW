@@ -7,6 +7,11 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        db_table = 'task_manager_category'
+        verbose_name = 'Category'
+        unique_together = ('name',)
+
 
 class Task(models.Model):
     STATUS_CHOICES = [
@@ -27,6 +32,12 @@ class Task(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        db_table = 'task_manager_task'
+        ordering = ['-created_at']
+        verbose_name = 'Task'
+        unique_together = ('title',)
+
 class SubTask(models.Model):
     STATUS_CHOICES = [
         ('New', 'New'),
@@ -45,3 +56,9 @@ class SubTask(models.Model):
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        db_table = 'task_manager_subtask'
+        ordering = ['-created_at']
+        verbose_name = 'SubTask'
+        unique_together = ('title',)

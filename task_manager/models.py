@@ -1,5 +1,14 @@
 from django.db import models
 
+from django.contrib.auth.models import UserManager
+
+STATUS_CHOICES = [
+        ('New', 'New'),
+        ('In progress', 'In progress'),
+        ('Pending', 'Pending'),
+        ('Blocked', 'Blocked'),
+        ('Done', 'Done'),
+    ]
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -12,15 +21,10 @@ class Category(models.Model):
         verbose_name = 'Category'
         unique_together = ('name',)
 
+    objects = UserManager()
+
 
 class Task(models.Model):
-    STATUS_CHOICES = [
-        ('New', 'New'),
-        ('In progress', 'In progress'),
-        ('Pending', 'Pending'),
-        ('Blocked', 'Blocked'),
-        ('Done', 'Done'),
-    ]
 
     title = models.CharField(max_length=50, unique_for_date='deadline')
     description = models.CharField(max_length=30)
@@ -38,14 +42,9 @@ class Task(models.Model):
         verbose_name = 'Task'
         unique_together = ('title',)
 
+    objects = UserManager()
+
 class SubTask(models.Model):
-    STATUS_CHOICES = [
-        ('New', 'New'),
-        ('In progress', 'In progress'),
-        ('Pending', 'Pending'),
-        ('Blocked', 'Blocked'),
-        ('Done', 'Done'),
-    ]
 
     title = models.CharField(max_length=50, unique_for_date='deadline')
     description = models.CharField(max_length=30)
@@ -62,3 +61,5 @@ class SubTask(models.Model):
         ordering = ['-created_at']
         verbose_name = 'SubTask'
         unique_together = ('title',)
+
+    objects = UserManager()

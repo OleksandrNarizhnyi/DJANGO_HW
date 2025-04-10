@@ -58,3 +58,4 @@ SubTask.objects.filter(title="Create slides").update(description="Create and for
 deleted, _ = Task.objects.filter(title="Prepare presentation").delete()
 
 print(f"Удалено {deleted} записей -> {_}")
+

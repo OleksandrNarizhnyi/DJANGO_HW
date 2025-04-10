@@ -1,6 +1,5 @@
 from django.db import models
 
-from django.contrib.auth.models import UserManager
 
 STATUS_CHOICES = [
         ('New', 'New'),
@@ -21,7 +20,7 @@ class Category(models.Model):
         verbose_name = 'Category'
         unique_together = ('name',)
 
-    objects = UserManager()
+
 
 
 class Task(models.Model):
@@ -42,7 +41,7 @@ class Task(models.Model):
         verbose_name = 'Task'
         unique_together = ('title',)
 
-    objects = UserManager()
+
 
 class SubTask(models.Model):
 
@@ -62,4 +61,3 @@ class SubTask(models.Model):
         verbose_name = 'SubTask'
         unique_together = ('title',)
 
-    objects = UserManager()

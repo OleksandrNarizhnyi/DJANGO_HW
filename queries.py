@@ -12,7 +12,7 @@ Task.objects.create(
     title='Prepare presentation',
     description='Prepare materials and slides for the presentation',
     status='New',
-    deadline=datetime.today() + timedelta(days=3),
+    deadline=datetime.today().astimezone() + timedelta(days=3),
 )
 
 
@@ -25,13 +25,13 @@ subtasks = [
         description='Find necessary information for the presentation',
         status='New',
         task=task,
-        deadline=datetime.today() + timedelta(days=2),),
+        deadline=datetime.today().astimezone() + timedelta(days=2),),
     SubTask(
         title='Create slides',
         description='Create presentation slides',
         status='New',
         task=task,
-        deadline=datetime.today() + timedelta(days=1),
+        deadline=datetime.today().astimezone() + timedelta(days=1),
 ),
 ]
 SubTask.objects.bulk_create(subtasks)
@@ -42,7 +42,7 @@ task_new = Task.objects.filter(
 print(task_new)
 
 subtask_done = SubTask.objects.filter(
-    Q(status="Done") & Q(deadline__lt=datetime.today())
+    Q(status="Done") & Q(deadline__lt=datetime.today().astimezone())
 )
 print(subtask_done)
 

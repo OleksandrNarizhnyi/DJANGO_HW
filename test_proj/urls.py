@@ -19,11 +19,11 @@ from django.urls import path
 
 from first_app.views import django_greetings, user_greetings
 from task_manager.views import (
-    task_create,
-    task_list, task_detail,
+    task_detail,
     task_statistic,
     SubTaskListCreateAPIView,
     SubTaskDetailUpdateDeleteView,
+    TaskListAPIView,
 )
 
 
@@ -32,11 +32,10 @@ urlpatterns = [
     path('greetings/', django_greetings),
     path('greetings/<str:name>/', user_greetings),
 
-    path('tasks/create/', task_create),
-    path('tasks/', task_list),
+    path('tasks/', TaskListAPIView.as_view()),
     path('tasks/<int:task_id>/', task_detail),
     path('tasks/statistic/', task_statistic),
 
-    path('subtasks', SubTaskListCreateAPIView.as_view()),
+    path('subtasks/', SubTaskListCreateAPIView.as_view()),
     path('subtasks/<int:subtask_id>', SubTaskDetailUpdateDeleteView.as_view()),
 ]

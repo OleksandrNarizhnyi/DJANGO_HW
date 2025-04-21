@@ -18,7 +18,13 @@ from django.contrib import admin
 from django.urls import path
 
 from first_app.views import django_greetings, user_greetings
-from task_manager.views import task_create, task_list, task_detail, task_statistic
+from task_manager.views import (
+    task_create,
+    task_list, task_detail,
+    task_statistic,
+    SubTaskListCreateAPIView,
+    SubTaskDetailUpdateDeleteView,
+)
 
 
 urlpatterns = [
@@ -30,4 +36,7 @@ urlpatterns = [
     path('tasks/', task_list),
     path('tasks/<int:task_id>/', task_detail),
     path('tasks/statistic/', task_statistic),
+
+    path('subtasks', SubTaskListCreateAPIView.as_view()),
+    path('subtasks/<int:subtask_id>', SubTaskDetailUpdateDeleteView.as_view()),
 ]

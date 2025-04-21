@@ -36,7 +36,7 @@ class SubTaskListCreateAPIView(APIView, PageNumberPagination):
                 task__title=title
             )
 
-        if status:
+        if status_sub:
             queryset = queryset.filter(
                 status=status_sub
             )

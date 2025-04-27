@@ -1,4 +1,5 @@
-
+from rest_framework.response import Response
+from rest_framework.request import Request
 from rest_framework import status, filters
 from django.db.models import Count, QuerySet
 from django.http import JsonResponse
@@ -6,14 +7,17 @@ from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.decorators import action
 
-from task_manager.models import Task, SubTask
+from task_manager.models import Task, SubTask, Category
 from task_manager.serializers import (
     TaskCreateSerializer,
     TaskListSerializer,
     TaskDetailSerializer,
     SubTaskSerializer,
     SubTaskCreateSerializer,
+    CategorySerializer,
 )
 
 # Задание 2: Замена представлений для подзадач (SubTasks) на Generic Views
@@ -88,6 +92,40 @@ class TaskDetailUpdateDeleteView(RetrieveUpdateDestroyAPIView):
         if self.request.method == 'GET':
             return TaskDetailSerializer
         return TaskCreateSerializer
+
+# Задание 1: Реализация CRUD для категорий с использованием ModelViewSet
+# Шаги для выполнения:
+# Создайте CategoryViewSet, используя ModelViewSet для CRUD операций.
+# Добавьте маршрут для CategoryViewSet.
+# Добавьте кастомный метод count_tasks используя декоратор @action для подсчета количества задач, связанных с каждой категорией.
+
+class CategoryViewSet(ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+    @action(
+        detail=False,
+        methods=['get', ],
+        url_path='statistic'
+    )
+    def get_tasks_count_by_category(self, request: Request) -> Response:
+        categories_statistic = Category.objects.annotate(
+            count_tasks=Count('task')
+        )
+
+        data = [
+            {
+                "id": c.id,
+                "name": c.name,
+                "count_tasks": c.count_tasks,
+            }
+            for c in categories_statistic
+        ]
+
+        return Response(
+            data=data,
+            status=status.HTTP_200_OK
+        )
 
 
 

@@ -40,6 +40,7 @@ class TaskDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = "__all__"
+        # exclude = ['status', 'deadline'] - какие поля не будут отображаться
 
 
 class SubTaskCreateSerializer(serializers.ModelSerializer):

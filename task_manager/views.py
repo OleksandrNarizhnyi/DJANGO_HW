@@ -9,6 +9,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from task_manager.models import Task, SubTask, Category
 from task_manager.serializers import (
@@ -31,6 +32,9 @@ from task_manager.serializers import (
 # Добавьте сортировку по полю created_at.
 class SubTasklistCreateView(ListCreateAPIView):
     queryset: QuerySet[SubTask] = SubTask.objects.all()
+    permission_classes = [
+        IsAuthenticatedOrReadOnly
+    ]
 
     filter_backends = [
         DjangoFilterBackend,
@@ -49,6 +53,9 @@ class SubTasklistCreateView(ListCreateAPIView):
 
 class SubTaskDetailUpdateDeleteView(RetrieveUpdateDestroyAPIView):
     queryset: QuerySet[SubTask] = SubTask.objects.all()
+    permission_classes = [
+        IsAuthenticatedOrReadOnly
+    ]
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -67,6 +74,9 @@ class SubTaskDetailUpdateDeleteView(RetrieveUpdateDestroyAPIView):
 
 class TaskListCreateView(ListCreateAPIView):
     queryset = Task.objects.all()
+    permission_classes = [
+        IsAuthenticatedOrReadOnly
+    ]
 
     filter_backends = [
         DjangoFilterBackend,
@@ -85,6 +95,9 @@ class TaskListCreateView(ListCreateAPIView):
 
 class TaskDetailUpdateDeleteView(RetrieveUpdateDestroyAPIView):
     queryset = Task.objects.all()
+    permission_classes = [
+        IsAuthenticatedOrReadOnly
+    ]
 
     lookup_url_kwarg = 'task_id'
 
@@ -102,6 +115,9 @@ class TaskDetailUpdateDeleteView(RetrieveUpdateDestroyAPIView):
 class CategoryViewSet(ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    permission_classes = [
+        IsAuthenticatedOrReadOnly
+    ]
 
     @action(
         detail=False,

@@ -17,6 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 from first_app.views import django_greetings, user_greetings
 from task_manager.views import (
@@ -45,4 +49,7 @@ urlpatterns = [
     path('subtasks/<int:pk>', SubTaskDetailUpdateDeleteView.as_view()),
 
     path('', include(router.urls)),
+
+    path('auth-login/', TokenObtainPairView.as_view()),
+    path('auth-refresh-token/', TokenRefreshView.as_view()),
 ]

@@ -60,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'test_proj.custom_middleware.CustomMiddleware',
+    'task_manager.middleware.jwt_helper.JWTAuthenticationMiddleware',
 ]
 
 ROOT_URLCONF = 'test_proj.urls'

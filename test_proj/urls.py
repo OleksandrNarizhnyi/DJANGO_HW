@@ -37,6 +37,9 @@ from task_manager.views import (
     CategoryViewSet,
     UserTasksListGenericView,
     UserSubTasksListGenericView,
+    LogInAPIView,
+    LogOutAPIView,
+    RegisterUserAPIView,
 )
 
 
@@ -72,6 +75,10 @@ urlpatterns = [
     path('subtasks/<int:pk>', UserSubTasksListGenericView.as_view()),
 
     path('', include(router.urls)),
+
+    path('login/', LogInAPIView.as_view()),
+    path('logout/', LogOutAPIView.as_view()),
+    path('register/', RegisterUserAPIView.as_view()),
 
     path('auth-login/', TokenObtainPairView.as_view()),
     path('auth-refresh-token/', TokenRefreshView.as_view()),

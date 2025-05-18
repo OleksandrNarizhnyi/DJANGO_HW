@@ -103,7 +103,7 @@ class TaskListCreateView(ListCreateAPIView):
         return TaskCreateSerializer
 
     def perform_create(self, serializer):
-        return serializer.seve(owner=self.request.user)
+        return serializer.save(owner=self.request.user)
 
 class TaskDetailUpdateDeleteView(RetrieveUpdateDestroyAPIView):
     queryset = Task.objects.all()

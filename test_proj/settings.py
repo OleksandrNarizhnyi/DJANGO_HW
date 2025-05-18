@@ -214,8 +214,8 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False,
         },
-        'task_manager': {  # Добавьте логгер для вашего приложения
-            'handlers': ['console', 'db_file'],  # Или любой другой обработчик, который вам нужен
+        'task_manager': {
+            'handlers': ['console', 'db_file'],
             'level': 'DEBUG' if DEBUG else 'INFO',
             'propagate': False,
         },

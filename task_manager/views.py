@@ -1,3 +1,6 @@
+import datetime
+
+from django.contrib.auth import authenticate
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status, filters
@@ -9,7 +12,8 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from task_manager.permissions.owner_permissions import IsOwnerOrReadOnly
 from task_manager.models import Task, SubTask, Category
@@ -20,7 +24,10 @@ from task_manager.serializers import (
     SubTaskSerializer,
     SubTaskCreateSerializer,
     CategorySerializer,
+    RegisterSerializer,
 )
+from task_manager.utils import set_jwt_cookies
+
 
 class UserSubTasksListGenericView(ListAPIView):
     serializer_class = SubTaskSerializer
@@ -111,11 +118,6 @@ class TaskDetailUpdateDeleteView(RetrieveUpdateDestroyAPIView):
             return TaskDetailSerializer
         return TaskCreateSerializer
 
-# Задание 1: Реализация CRUD для категорий с использованием ModelViewSet
-# Шаги для выполнения:
-# Создайте CategoryViewSet, используя ModelViewSet для CRUD операций.
-# Добавьте маршрут для CategoryViewSet.
-# Добавьте кастомный метод count_tasks используя декоратор @action для подсчета количества задач, связанных с каждой категорией.
 
 class CategoryViewSet(ModelViewSet):
     queryset = Category.objects.all()
@@ -148,6 +150,59 @@ class CategoryViewSet(ModelViewSet):
             status=status.HTTP_200_OK
         )
 
+class LogInAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request: Request) -> Response:
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        user = authenticate(
+            request=request,
+            username=username,
+            password=password
+        )
+
+        if user:
+            response = Response(status=status.HTTP_200_OK)
+
+            set_jwt_cookies(response=response, user=user)
+
+            return response
+
+        else:
+            return Response(
+                data={"message": "Invalid username or password."},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+
+class LogOutAPIView(APIView):
+    def post(self, request):
+        response = Response(status=status.HTTP_200_OK)
+
+        response.delete_cookie('access_token')
+        response.delete_cookie('refresh_token')
+
+        return response
+
+
+class RegisterUserAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request: Request) -> Response:
+        serializer = RegisterSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+
+        response = Response(
+            data=serializer.data,
+            status=status.HTTP_201_CREATED
+        )
+
+        set_jwt_cookies(response, user)
+
+        return response
 
 
 def task_statistic(request):
@@ -161,3 +216,5 @@ def task_statistic(request):
         'count_task_by_status': status_counts
     }
     return JsonResponse(response_data)
+
+

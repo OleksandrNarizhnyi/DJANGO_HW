@@ -14,8 +14,8 @@ def change_status_by_task_signal(sender, instance, **kwargs):
             send_mail(
                 subject='Задача закрыта',
                 message=f"Задача '{old_instance.title}' была закрыта.",
-                from_email='no-reply@taskmanager.com',  # Убедитесь, что этот адрес настроен в DEFAULT_FROM_EMAIL
-                recipient_list=['recipient@example.com'],  # Замените на адреса получателей
+                from_email='no-reply@taskmanager.com',
+                recipient_list=['recipient@example.com'],
                 fail_silently=False,
             )
             print('|' * 100)
@@ -25,7 +25,7 @@ def change_status_by_task_signal(sender, instance, **kwargs):
             send_mail(
                 subject='Статус задачи изменён',
                 message=f"Статус задачи '{old_instance.title}' изменён со статуса '{old_instance.status}' на '{instance.status}'.",
-                from_email='no-reply@taskmanager.com',  # Убедитесь, что этот адрес настроен в DEFAULT_FROM_EMAIL
+                from_email='no-reply@taskmanager.com',
                 recipient_list=['admin.mail@gmail.com'],
                 fail_silently=False,
             )

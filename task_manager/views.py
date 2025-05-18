@@ -5,12 +5,13 @@ from django.db.models import Count, QuerySet
 from django.http import JsonResponse
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
+from task_manager.permissions.owner_permissions import IsOwnerOrReadOnly
 from task_manager.models import Task, SubTask, Category
 from task_manager.serializers import (
     TaskCreateSerializer,
@@ -21,15 +22,15 @@ from task_manager.serializers import (
     CategorySerializer,
 )
 
-# Задание 2: Замена представлений для подзадач (SubTasks) на Generic Views
-# Шаги для выполнения:
-# Замените классы представлений для подзадач на Generic Views:
-# Используйте ListCreateAPIView для создания и получения списка подзадач.
-# Используйте RetrieveUpdateDestroyAPIView для получения, обновления и удаления подзадач.
-# Реализуйте фильтрацию, поиск и сортировку:
-# Реализуйте фильтрацию по полям status и deadline.
-# Реализуйте поиск по полям title и description.
-# Добавьте сортировку по полю created_at.
+class UserSubTasksListGenericView(ListAPIView):
+    serializer_class = SubTaskSerializer
+
+    def get_queryset(self):
+        return SubTask.objects.filter(
+            owner=self.request.user
+        )
+
+
 class SubTasklistCreateView(ListCreateAPIView):
     queryset: QuerySet[SubTask] = SubTask.objects.all()
     permission_classes = [
@@ -50,11 +51,14 @@ class SubTasklistCreateView(ListCreateAPIView):
             return SubTaskSerializer
         return SubTaskCreateSerializer
 
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
 
 class SubTaskDetailUpdateDeleteView(RetrieveUpdateDestroyAPIView):
     queryset: QuerySet[SubTask] = SubTask.objects.all()
     permission_classes = [
-        IsAuthenticatedOrReadOnly
+        IsOwnerOrReadOnly
     ]
 
     def get_serializer_class(self):
@@ -62,15 +66,14 @@ class SubTaskDetailUpdateDeleteView(RetrieveUpdateDestroyAPIView):
             return SubTaskSerializer
         return SubTaskCreateSerializer
 
-# Задание 1: Замена представлений для задач (Tasks) на Generic Views
-# Шаги для выполнения:
-# Замените классы представлений для задач на Generic Views:
-# Используйте ListCreateAPIView для создания и получения списка задач.
-# Используйте RetrieveUpdateDestroyAPIView для получения, обновления и удаления задач.
-# Реализуйте фильтрацию, поиск и сортировку:
-# Реализуйте фильтрацию по полям status и deadline.
-# Реализуйте поиск по полям title и description.
-# Добавьте сортировку по полю created_at.
+
+class UserTasksListGenericView(ListAPIView):
+    serializer_class = TaskDetailSerializer
+
+    def get_queryset(self):
+        return Task.objects.filter(
+            owner=self.request.user
+        )
 
 class TaskListCreateView(ListCreateAPIView):
     queryset = Task.objects.all()
@@ -92,11 +95,13 @@ class TaskListCreateView(ListCreateAPIView):
             return TaskListSerializer
         return TaskCreateSerializer
 
+    def perform_create(self, serializer):
+        return serializer.seve(owner=self.request.user)
 
 class TaskDetailUpdateDeleteView(RetrieveUpdateDestroyAPIView):
     queryset = Task.objects.all()
     permission_classes = [
-        IsAuthenticatedOrReadOnly
+        IsOwnerOrReadOnly
     ]
 
     lookup_url_kwarg = 'task_id'

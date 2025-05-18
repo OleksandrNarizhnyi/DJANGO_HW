@@ -2,13 +2,15 @@ from rest_framework import serializers
 from task_manager.models import Task, SubTask, Category
 from django.utils import timezone
 
+from task_manager.permissions.owner_permissions import IsOwnerOrReadOnly
 
 class TaskCreateSerializer(serializers.ModelSerializer):
     deadline = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S%z")
+    permission_classes = [IsOwnerOrReadOnly]
 
     class Meta:
         model = Task
-        fields = ['title', 'description', 'status', 'deadline']
+        fields = ['title', 'description', 'status', 'deadline','owner']
 
     def validate_deadline(self, value: str):
         if value < timezone.now():
@@ -23,7 +25,7 @@ class TaskCreateSerializer(serializers.ModelSerializer):
 class TaskListSerializer(serializers.ModelSerializer):
      class Meta:
          model = Task
-         fields = ['title', 'description', 'status', 'deadline']
+         fields = ['title', 'description', 'status', 'deadline','owner']
 
 
 class SubTaskSerializer(serializers.ModelSerializer):
@@ -36,6 +38,7 @@ class SubTaskSerializer(serializers.ModelSerializer):
 
 class TaskDetailSerializer(serializers.ModelSerializer):
     subtask_set = SubTaskSerializer(many=True)
+    permission_classes = [IsOwnerOrReadOnly]
 
     class Meta:
         model = Task
@@ -45,6 +48,7 @@ class TaskDetailSerializer(serializers.ModelSerializer):
 
 class SubTaskCreateSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(read_only=True)
+    permission_classes = [IsOwnerOrReadOnly]
 
     class Meta:
         model = SubTask

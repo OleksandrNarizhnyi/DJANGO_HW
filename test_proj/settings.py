@@ -64,6 +64,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'test_proj.urls'
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = 'no-reply@taskmanager.com'
 
 TEMPLATES = [
     {
@@ -211,7 +213,12 @@ LOGGING = {
             # 'level': 'DEBUG' if DEBUG else 'INFO',
             'level': 'INFO',
             'propagate': False,
-        }
+        },
+        'task_manager': {  # Добавьте логгер для вашего приложения
+            'handlers': ['console', 'db_file'],  # Или любой другой обработчик, который вам нужен
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': False,
+        },
     }
 }
 
